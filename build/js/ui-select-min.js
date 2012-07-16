@@ -1,0 +1,1 @@
+(function(a){a.fn.select=function(b){a.fn.select.defaults={};var b=a.extend({},a.fn.select.defaults,b);this.each(function(){})}})(jQuery);

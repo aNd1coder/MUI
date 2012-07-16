@@ -1,0 +1,1 @@
+(function(a){a.fn.imgready=function(b){a.fn.imgready.defaults={};var b=a.extend({},a.fn.imgready.defaults,b);this.each(function(){})}})(jQuery);

@@ -1,0 +1,1 @@
+(function(a){a.fn.waterfall=function(b){a.fn.waterfall.defaults={};var b=a.extend({},a.fn.waterfall.defaults,b);this.each(function(){})}})(jQuery);

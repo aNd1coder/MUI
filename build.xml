@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (c) 2012, Mttang Inc. All rights reserved.
+     @author    : aNd1coder
+     @update    : $Id: build.xml 19340 2012-05-22 03:10:31Z guiyonghong $
+     @overview  : MUI front-end compiler platform and autotools
+     @reference : http://www.programmer.com.cn/5770/
+-->
+<project name="MUI.Build" default="init" basedir=".">
+    <description description="Mttang front end user interface library"/>
+    <!--  all properties are in build.properties -->
+    <property file="build.properties"/>
+    <property name="www.dir" location="E:\workspaces\Mttang\www\mui"/>
+    <property name="api.dir" location="${www.dir}\docs\api\"/>
+
+    <!-- path to the svnant libraries.-->
+    <path id="project.classpath">
+        <pathelement location="${svnjavahl.jar}"/>
+        <pathelement location="${svnant.jar}"/>
+        <pathelement location="${svnClientAdapter.jar}"/>
+        <pathelement location="${svnkit.jar}"/>
+        <pathelement location="${svntask.jar}"/>
+    </path>
+
+    <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+
+    <!-- current date -->
+    <tstamp>
+        <format property="now.date" pattern="yyyy-MM-dd" locale="zh"/>
+    </tstamp>
+
+    <!-- usage::::::project overview:::::: -->
+    <target name="usage" depends="init" description="project overview">
+        <echo message="[info]----------- ${name} ${version} [${year}] -----------"/>
+        <echo message="${name} build file"/>
+        <echo message="--------------------------------------"/>
+        <echo message=""/>
+        <echo message="available project diretories are:"/>
+        <echo message=""/>
+        <echo message="src  ---> css and js source file"/>
+        <echo message="build  ---> compressor(,CSSLint,JSLint,google compiler,concat) the css and js"/>
+        <echo message="support ---> the third-party tool"/>
+        <echo message="docs ---> generates the api documentation"/>
+        <echo message=""/>
+        <echo message="available targets are:"/>
+        <echo message=""/>
+        <echo message="${ant.home}"/>
+    </target>
+
+    <!--jslint  :::http://mattsnider.com/build/running-jslint-with-your-ant-build/:::-->
+    <target name="jslint">
+        <echo message="JSLinting ${src.dir}/js/*.js"/>
+        <apply executable="java" parallel="false">
+            <fileset dir="${src.dir}/js/" includes="*.js"/>
+            <arg line="-jar"/>
+            <arg path="${rhino.jar}"/>
+            <arg path="${jslint.js}"/>
+        </apply>
+    </target>
+
+    <!--subversion task-->
+    <target name="update" description="checkout full MUI project">
+        <svn username="${svnant.repository.user}" password="${svnant.repository.passwd}">
+            <checkout url="${svnant.repository.url}" revision="HEAD" destPath="."/>
+        </svn>
+    </target>
+
+    <!--add-->
+    <target name="svn.add">
+        <svn>
+            <add dir="${src.dir}"/>
+            <add dir="${docs.dir}"/>
+            <add dir="${www.dir}"/>
+        </svn>
+    </target>
+
+    <!--update-->
+    <target name="svn.update">
+        <svn>
+            <update dir="${basedir}" recurse="true"/>
+            <update dir="${www.dir}" recurse="true"/>
+        </svn>
+    </target>
+
+    <!--commit-->
+    <target name="svn.commit">
+        <svn>
+            <!--<delete>
+                <fileset dir="workingcopy/deleteTest">
+                    <include name="**/*.del"/>
+                </fileset>
+            </delete>-->
+            <commit message="commit base directory files" dir="${basedir}"/>
+            <commit message="commit www directory files" dir="${www.dir}"/>
+        </svn>
+    </target>
+
+    <!--delete-->
+    <target name="svn.delete">
+        <svn>
+            <delete>
+                <fileset dir="">
+                    <include name=""/>
+                </fileset>
+            </delete>
+        </svn>
+    </target>
+
+    <target name="svn.cleanup">
+        <svn>
+
+        </svn>
+    </target>
+
+    <!--update the js and css file's version in html-->
+    <target name="svn.info">
+        <svn username="${svnant.repository.user}" password="${svnant.repository.passwd}">
+            <status urlProperty="http://axxxx/xxxx/xxxxxx/xxxx" path="." revisionProperty="svn.revision"/>
+        </svn>
+        <echo>lastChangedRevisionProperty ${svn.revision}</echo>
+    </target>
+
+    <!--build document-->
+    <target name="jsdoc">
+        <echo message="${api.dir}"/>
+        <exec executable="java" failonerror="true">
+            <arg value="-jar"/>
+            <arg path="${jsrun.jar}"/>
+            <arg path="${jsdoc.home}/app/run.js"/>
+            <arg value="-d=${api.dir}"/>
+            <arg value="-t=${jsdoc.home}/templates/codeview"/>
+            <arg value="-r"/>
+            <arg value="-q"/>
+            <arg path="${src.dir}/js/"/>
+        </exec>
+        <delete dir="${api.dir}/css/"/>
+        <delete dir="${api.dir}/javascript/"/>
+        <antcall target="svn.commit"/>
+    </target>
+
+    <!-- init -->
+    <target name="init" depends="clean" description="do all the project init task">
+        <antcall target="svn.update"/>
+    </target>
+
+    <!--copy source file to build directory-->
+    <target name="copy" depends="init" description="copy source files to build directory">
+        <echo message="copy all ${src.dir} files to :${build.dir}"/>
+        <copy todir="${build.dir}/src/" overwrite="true">
+            <fileset dir="${src.dir}/css/"/>
+            <fileset dir="${src.dir}/js/"/>
+        </copy>
+    </target>
+
+    <!--css minify-->
+    <target name="css.minify" depends="copy" description="minify all css files">
+        <echo message="minify ${src.dir}/css/ all .css files------[start]"/>
+        <mkdir dir="${build.dir}/css/"/>
+        <apply executable="java" verbose="true" dest="${build.dir}/css/" parallel="false" failonerror="true">
+            <fileset dir="${src.dir}/css/" includes="*.css"/>
+            <arg line="-jar"/>
+            <arg path="${yuicompressor.jar}"/>
+            <arg line="--charset ${inputencoding}"/>
+            <arg value="--type"/>
+            <arg value="css"/>
+            <arg line="-o"/>
+            <targetfile/>
+            <mapper type="glob" from="*.css" to="*-min.css"/>
+        </apply>
+        <echo message="minify ${src.dir}/css/ all .css files------[end]"/>
+    </target>
+
+    <!--js minify-->
+    <target name="js.minify" depends="copy" description="minify all js files">
+        <echo message="minify ${src.dir}/js/ all .js files------[start]"/>
+        <mkdir dir="${build.dir}/js/"/>
+        <apply executable="java" verbose="true" dest="${build.dir}/js/" parallel="false" failonerror="true">
+            <fileset dir="${src.dir}/js/" includes="*.js"/>
+            <arg line="-jar"/>
+            <arg path="${yuicompressor.jar}"/>
+            <arg line="--charset ${inputencoding}"/>
+            <arg value="--type"/>
+            <arg value="js"/>
+            <arg line="-o"/>
+            <targetfile/>
+            <mapper type="glob" from="*.js" to="*-min.js"/>
+        </apply>
+        <echo message="minify ${src.dir}/js/ all .js files------[end]"/>
+    </target>
+
+    <!--js closure compiler-->
+    <target name="js.compiler" depends="copy" description="closure compiler all js files">
+        <echo message="closure compiler ${src.dir}/js/ all .js files------[start]"/>
+        <mkdir dir="${build.dir}/js/"/>
+        <apply executable="java" verbose="true" dest="${build.dir}/js/" parallel="false" failonerror="true">
+            <fileset dir="${src.dir}/js/" includes="*.js"/>
+            <arg line="-jar"/>
+            <arg path="${combiner.jar}"/>
+            <arg line="--charset ${encoding}"/>
+            <arg value="--warning_level"/>
+            <arg value="QUIET"/>
+            <arg value="--js"/>
+            <srcfile/>
+            <arg value="--js_output_file"/>
+            <targetfile/>
+            <mapper type="regexp" from="^(.*)\.js$" to="\1-min.js"/>
+        </apply>
+        <echo message="closure compiler ${src.dir}/js/ all .js files------[end]"/>
+    </target>
+
+    <!--css and js minify-->
+    <target name="all.minify" depends="css.minify,js.minify" description="minify all css and javascript files">
+        <delete dir="${build.dir}/src"/>
+        <echo message="compress ${src.dir} all .css and .js files------[done]"/>
+    </target>
+
+    <!--js dependency combiner-->
+    <target name="jscombiner" depends="init" description="js dependency combiner">
+        <mkdir dir="${build.dir}/pkg"/>
+        <apply executable="java" parallel="true" failonerror="true">
+            <fileset dir="${src.dir}/js" includes="*.js"/>
+            <arg line="-jar"/>
+            <arg path="${combiner.jar}"/>
+            <arg line="–-charset ${inputencoding}"/>
+            <arg line="-o ${build.dir}/pkg/mui-pkg.min.js"/>
+            <srcfile/>
+        </apply>
+    </target>
+
+    <!--deploy to the remote server
+    <ftp server="ftp.yourserver.com" remotedir="/_demo"
+         userid="your_username"
+         password="your_password"
+         depends="yes"
+         verbose="yes"
+         binary="no"/>
+     -->
+
+    <!--native2ascii-->
+    <target name="native2ascii">
+        <native2ascii
+                encoding="${encoding}"
+                src="${src.dir}"
+                dest="${build.dir}"
+                includes="**/*-pkg-min.js"
+                >
+            <mapper type="regexp" from="^(.*)\.js$" to="\1-ascii.js"/>
+        </native2ascii>
+    </target>
+
+    <!--concat-->
+    <concat destfile="${build.dir}/pkg/ui-widgets-pkg.js" encoding="${encoding}" outputencoding="${encoding}"
+            overwrite="true">
+        <header filtering="no" trimleading="yes">&#xFEFF;</header>
+        <filelist dir="${src.dir}/js/"/>
+        <!--<path location="x"/>-->
+        <!--<path location="y"/>-->
+        <!--delete BOM characters-->
+        <filterchain>
+            <deletecharacters chars="&#xFEFF;"/>
+        </filterchain>
+    </concat>
+
+    <!--clean dir-->
+    <target name="clean" description="clean all temp directory">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!--build all task-->
+    <target name="build" description="build all task">
+
+    </target>
+
+
+    <!-- import common build file
+    <import file="build.xml"/>
+    <subant target="所有的构建目标" inheritall="子构建同父构建属性独立">
+        <fileset dir="所有构建文件来源" includes="**/build.xml"/>
+    </subant>
+    -->
+</project>
