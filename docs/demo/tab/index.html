@@ -2,10 +2,10 @@
 <html dir="ltr" lang="zh-CN">
 <head>
     <meta charset="utf-8"/>
-    <title>选项卡 - <!--# include virtual="/inc/title.html" --></title>
-    <!--# include virtual="/inc/css.html" -->
-    <link rel="stylesheet" href="http://static.mttang.com/MUI/src/css/ui-tab.css"/>
-    <!--# include virtual="/inc/js.html" -->
+    <title>选项卡 - <!--# include virtual="/docs/inc/title.html" --></title>
+    <!--# include virtual="/docs/inc/css.html" -->
+    <link rel="stylesheet" href="/src/css/ui-tab.css"/>
+    <!--# include virtual="/docs/inc/js.html" -->
     <style>
         .mod{
             position:relative;
@@ -55,9 +55,9 @@
     </style>
 </head>
 <body>
-<!--# include virtual="/inc/hdplaceholder.html" -->
+<!--# include virtual="/docs/inc/hdplaceholder.html" -->
 <div id="wrapper">
-    <!--# include virtual="/inc/header.html" -->
+    <!--# include virtual="/docs/inc/header.html" -->
     <div id="container">
         <h2>选项卡示例</h2>
         <!--S media-->
@@ -105,10 +105,10 @@
             </div>
         </pre>
 		<pre class="brush: css;">
-            <link rel="stylesheet" href="http://static.mttang.com/MUI/build/css/ui-tab-min.css"/>
+            <link rel="stylesheet" href="/build/css/ui-tab-min.css"/>
         </pre>
         <pre class="brush: js;">
-            <script src="http://static.mttang.com/MUI/build/js/ui-tab-min.js"></script>
+            <script src="/build/js/ui-tab-min.js"></script>
 
             <script>
                 $("#tabid").tab();
@@ -174,15 +174,15 @@
         </div>
         <!--E options-->
     </div>
-    <!--# include virtual="/inc/footer.html" -->
+    <!--# include virtual="/docs/inc/footer.html" -->
 </div>
-<script src="http://static.mttang.com/MUI/src/js/ui-tab.js"></script>
+<script src="/src/js/ui-tab.js"></script>
 <script>
     $(function () {
         $("#tab1").tab();
         $("#tab2").tab({auto:true, selectedIndex:2});
     })
 </script>
-<!--# include virtual="/inc/ftplaceholder.html" -->
+<!--# include virtual="/docs/inc/ftplaceholder.html" -->
 </body>
 </html>

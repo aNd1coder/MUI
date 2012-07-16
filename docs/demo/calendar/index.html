@@ -2,12 +2,12 @@
 <html dir="ltr" lang="zh-CN">
 <head>
     <meta charset="utf-8"/>
-    <title>calendar - <!--# include virtual="/inc/title.html" --></title>
-    <!--# include virtual="/inc/css.html" -->
-    <!--# include virtual="/inc/js.html" -->
+    <title>calendar - <!--# include virtual="/docs/inc/title.html" --></title>
+    <!--# include virtual="/docs/inc/css.html" -->
+    <!--# include virtual="/docs/inc/js.html" -->
     <style>
         .ui-calendar {margin:50px 0;border-radius: 10px 10px 10px 10px;box-shadow: 2px 2px 20px 0; background-color:#FFF; position:relative;}
-        .ui-calendar caption,.ui-calendar th,.ui-calendar-cell-current a {background: url(http://static.mttang.com/MUI/docs/demo/assets/img/sprite-calendar.png) repeat-x;}
+        .ui-calendar caption,.ui-calendar th,.ui-calendar-cell-current a {background: url(/docs/demo/assets/img/sprite-calendar.png) repeat-x;}
         .ui-calendar caption { height:26px; padding-top: 6px; text-align:left; font-family:Simsun; background-position: 0 -30px; border: 1px solid #861e1b;}
         .ui-calendar caption a{ display:inline-block; margin:0 3px; padding: 0 2px; background-repeat: no-repeat; color: #FFF;}
         .ui-calendar-selected-date,.ui-calendar-select {background-color:rgba(34,34,34,0.3);border-radius: 10px 10px 10px 10px;}
@@ -25,9 +25,9 @@
     </style>
 </head>
 <body>
-<!--# include virtual="/inc/hdplaceholder.html" -->
+<!--# include virtual="/docs/inc/hdplaceholder.html" -->
 <div id="wrapper">
-    <!--# include virtual="/inc/header.html" -->
+    <!--# include virtual="/docs/inc/header.html" -->
     <div id="container">
         <h2>calendar示例</h2>
         <!--S calendar-->
@@ -119,10 +119,10 @@
             </table>
         </pre>
         <pre class="brush:css">
-            <!--<link rel="stylesheet" href="http://static.mttang.com/MUI/build/css/ui-calendar-min.css" />-->
+            <!--<link rel="stylesheet" href="/build/css/ui-calendar-min.css" />-->
         </pre>
         <pre class="brush:js">
-            <!--<script src="http://static.mttang.com/MUI/build/js/ui-calendar-min.js"></script>
+            <!--<script src="/build/js/ui-calendar-min.js"></script>
             new Calendar({
                 container:"j_calendar",  //表格id
                 labelSelectedDate:"j_selected_date",//显示当前日期的标签
@@ -134,9 +134,9 @@
         </pre>
         <!--E calendar-->
     </div>
-    <!--# include virtual="/inc/footer.html" -->
+    <!--# include virtual="/docs/inc/footer.html" -->
 </div>
-<script src="http://static.mttang.com/MUI/src/js/ui-calendar.js"></script>
+<script src="/src/js/ui-calendar.js"></script>
 <script>
     $(function () {
         new Calendar({
@@ -149,6 +149,6 @@
         });
     })
 </script>
-<!--# include virtual="/inc/ftplaceholder.html" -->
+<!--# include virtual="/docs/inc/ftplaceholder.html" -->
 </body>
 </html>
